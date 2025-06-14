@@ -1,0 +1,16 @@
+@import "tailwindcss";
+/* @import "tw-animate-css"; */
+
+@plugin 'tailwind-scrollbar';
+
+@layer base {
+  * {
+    @apply scrollbar-thin  scrollbar-thumb-purple-950 scrollbar-track-black;
+  }
+}
+
+.canvas {
+  /* background-color: black; */
+  max-width: 100%;
+  max-height: 100%;
+}
