@@ -33,7 +33,7 @@ const ExportModal = ({ project, onClose, render }: Props) => {
   const [mintData, setMintData] = useState<MintData | undefined>()
   const [isExporting, setIsExporting] = useState(false)
   const [isMinting, setIsMinting] = useState(false)
-  const [mintAsNFT, setMintAsNFT] = useState(false)
+  const [error, setError] = useState<string | undefined>()
   const [mintPrice, setMintPrice] = useState<BigNumber | string>()
   const {
     mintNft
@@ -56,14 +56,14 @@ const ExportModal = ({ project, onClose, render }: Props) => {
 
     // Simulate export process
     if (connected) {
-      const file:any  = await render()
-      if (!file&& file == undefined ) {
+      const file: any = await render()
+      if (!file && file == undefined) {
         alert("Failed to render video file.");
         setIsMinting(false);
         return;
       }
       const mint = await mintNft(file)
-
+      console.log(mint)
 
 
 
@@ -72,8 +72,14 @@ const ExportModal = ({ project, onClose, render }: Props) => {
 
 
       // alert('Video exported and minted as NFT successfully!')
+      if ( mint ) {
 
-      setMintData(mint)
+        setMintData(mint)
+      } else {
+        setError("unable to mint video Please try again")
+        setIsMinting(false)
+      }
+
 
     } else {
 
@@ -190,88 +196,98 @@ const ExportModal = ({ project, onClose, render }: Props) => {
 
 
               )
-              :
 
+              : error ?
 
-              (<>
-                {/* Header */}
+                (<><h1 className='h-[60vh] text-red-400 flex flex-col items-center justify-center'>
+                  <span className='my-auto'>
 
-                {/* Export Settings */}
-                <div className="space-y-4 mb-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Format</label>
-                    <select
-                      value={exportFormat}
-                      onChange={(e) => setExportFormat(e.target.value)}
-                      className="w-full p-3 rounded-lg bg-purple-500/10 border border-purple-500/30 text-white focus:border-purple-400 focus:outline-none"
-                    >
-                      <option value="mp4">MP4</option>
-                      <option value="mov">MOV</option>
-                      <option value="avi">AVI</option>
-                    </select>
-                  </div>
+                  {error}
+                  </span>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Quality</label>
-                    <select
-                      value={quality}
-                      onChange={(e) => setQuality(e.target.value)}
-                      className="w-full p-3 rounded-lg bg-purple-500/10 border border-purple-500/30 text-white focus:border-purple-400 focus:outline-none"
-                    >
-                      <option value="720p">720p HD</option>
-                      <option value="1080p">1080p Full HD</option>
-                      <option value="4k">4K Ultra HD</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* NFT Minting Option */}
-                {connected && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-6 p-4 rounded-lg bg-gradient-to-r from-purple-600/20 to-purple-800/20 border border-purple-500/30"
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleExport}
+                    disabled={isExporting}
+                    className="w-full flex mt-auto items-center justify-center gap-3 p-4 rounded-lg bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 p-2 rounded-lg bg-purple-600">
-                        <Sparkles className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-white mb-1">Mint as NFT</h3>
-                        <p className="text-sm text-gray-300 mb-3">
-                          Turn your video into an NFT and earn money when it goes viral!
-                        </p>
-                        <div className="flex items-center gap-2 text-sm text-green-400">
-                          <DollarSign className="w-4 h-4" />
-                          <span>Earn royalties from future sales</span>
-                        </div>
+                    Try again
+                  </motion.button>
 
-                      </div>
+                </h1></>)
+                :
+
+
+                (<>
+                  {/* Header */}
+
+                  {/* Export Settings */}
+                  <div className="space-y-4 mb-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Format</label>
+                      <select
+                        value={exportFormat}
+                        onChange={(e) => setExportFormat(e.target.value)}
+                        className="w-full p-3 rounded-lg bg-purple-500/10 border border-purple-500/30 text-white focus:border-purple-400 focus:outline-none"
+                      >
+                        <option value="mp4">MP4</option>
+                        <option value="mov">MOV</option>
+                        <option value="avi">AVI</option>
+                      </select>
                     </div>
-                  </motion.div>
-                )}
 
-                {/* Export Button */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleExport}
-                  disabled={isExporting}
-                  className="w-full flex items-center justify-center gap-3 p-4 rounded-lg bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isExporting ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      {mintAsNFT ? 'Exporting & Minting...' : 'Exporting...'}
-                    </>
-                  ) : (
-                    <>
-                      {mintAsNFT ? <Coins className="w-5 h-5" /> : <Download className="w-5 h-5" />}
-                      {mintAsNFT ? 'Export & Mint NFT' : 'Export Video'}
-                    </>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Quality</label>
+                      <select
+                        value={quality}
+                        onChange={(e) => setQuality(e.target.value)}
+                        className="w-full p-3 rounded-lg bg-purple-500/10 border border-purple-500/30 text-white focus:border-purple-400 focus:outline-none"
+                      >
+                        <option value="720p">720p HD</option>
+                        <option value="1080p">1080p Full HD</option>
+                        <option value="4k">4K Ultra HD</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* NFT Minting Option */}
+                  {connected && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-6 p-4 rounded-lg bg-gradient-to-r from-purple-600/20 to-purple-800/20 border border-purple-500/30"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 p-2 rounded-lg bg-purple-600">
+                          <Sparkles className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-white mb-1">Mint as NFT</h3>
+                          <p className="text-sm text-gray-300 mb-3">
+                            Turn your video into an NFT and earn money when it goes viral!
+                          </p>
+                          <div className="flex items-center gap-2 text-sm text-green-400">
+                            <DollarSign className="w-4 h-4" />
+                            <span>Earn royalties from future sales</span>
+                          </div>
+
+                        </div>
+                      </div>
+                    </motion.div>
                   )}
-                </motion.button>
-              </>)}
+
+                  {/* Export Button */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleExport}
+                    disabled={isExporting}
+                    className="w-full flex items-center justify-center gap-3 p-4 rounded-lg bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Export and Mint
+                  </motion.button>
+                </>)}
 
           {!connected && (
             <p className="text-center text-sm text-gray-400 mt-3">

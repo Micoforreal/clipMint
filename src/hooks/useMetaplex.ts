@@ -47,6 +47,7 @@ export const useMetaplex = () => {
   const [collectionAddress, setCollectionAddress] = useState<string | null>(
     null
   );
+  // console.log(import.meta.env.VITE_SIGNER_KEY)
 
   const getUmi = useCallback(() => {
     if (!walletPublicKey) return null;
@@ -179,7 +180,7 @@ export const useMetaplex = () => {
           solScanLink: `https://solscan.io/token/${assetAddress}?cluster=devnet`,
         };
 
-        return;
+        return  mintInfo;
       } catch (error) {
         console.log(error);
       } finally {
