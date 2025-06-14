@@ -25,12 +25,9 @@ import { clusterApiUrl } from "@solana/web3.js";
 import bs58 from "bs58";
 import { PinataSDK } from "pinata";
 
-const SIGNER_KEY =
-  "iiU5gUQ2oc19dZAS+oa2csDwwjfn5lYABLG4HCP7Xz2qptrRowwnheYeAGFB+vm2EWCLM2crfbFa76Ls8sO/3Q==";
-const SIGNER_ADDRESS = "CV9soFF5eh6yX7f1NDKGXVe23drPKmja5sFBjzZKUMwz";
-const PINATA_JWT =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkZWE3N2VkYS1kZTEyLTQ4NTItYThlNi04M2M3MzM0OWY1OGIiLCJlbWFpbCI6Im1qamFtZXMwMDZAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjE2NWI3NTFkM2QxODRlNTYzY2ZlIiwic2NvcGVkS2V5U2VjcmV0IjoiNGI5ZjgwOGYzZDEzNzFhODA3MjgxYTYzZDEyODc1MGVkOTc4YzEzMzQxNDA0NjUwNDhlYTFmMDA5MjczNjIzNCIsImV4cCI6MTc4MTQzMTAxNH0.DZmtqR-UF7XfB9PHXdhYtIKgr90ohI2bVyBHprmp74M";
-
+const SIGNER_KEY =import.meta.env.VITE_SIGNER_KEY;
+const SIGNER_ADDRESS = import.meta.env.VITE_SIGNER_ADDRESS;
+const PINATA_JWT =import.meta.env.VITE_PINATA_JWT;
 const pinata = new PinataSDK({
   pinataJwt: PINATA_JWT,
   pinataGateway: import.meta.env.VITE_GATEWAY_URL,
@@ -123,7 +120,7 @@ export const useMetaplex = () => {
       if (!umi) throw new Error("Umi not initialized");
       const secret1 = new Uint8Array(
         Buffer.from(
-          "iiU5gUQ2oc19dZAS+oa2csDwwjfn5lYABLG4HCP7Xz2qptrRowwnheYeAGFB+vm2EWCLM2crfbFa76Ls8sO/3Q==",
+          SIGNER_KEY,
           "base64"
         )
       );
@@ -182,7 +179,7 @@ export const useMetaplex = () => {
           solScanLink: `https://solscan.io/token/${assetAddress}?cluster=devnet`,
         };
 
-        return ;
+        return;
       } catch (error) {
         console.log(error);
       } finally {
